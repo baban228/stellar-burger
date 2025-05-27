@@ -1,15 +1,16 @@
 import {
-    getUserApi,
-    loginUserApi,
-    logoutApi,
-    registerUserApi,
-    TLoginData,
-    TRegisterData,
-    updateUserApi
-  } from '@api';
+  TRegisterData,
+  loginUserApi,
+  TLoginData,
+  getUserApi,
+  getOrdersApi,
+  logoutApi,
+  updateUserApi,
+  registerUserApi
+} from '../../../utils/burger-api';
   import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
   import { TUser } from '@utils-types';
-  import { deleteCookie, setCookie } from '../../utils/cookie';
+  import { deleteCookie, setCookie } from '../../../utils/cookie';
   
   type TUser_State = {
     user_data: TUser | null;

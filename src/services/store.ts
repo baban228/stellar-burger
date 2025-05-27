@@ -3,14 +3,14 @@ import {
   useDispatch as dispatch_hook,
   useSelector as selector_hook
 } from 'react-redux';
-import { user_slice } from './slices/slice_user';
-import { feed_slice } from './slices/slice_feed';
-import { orders_slice } from './slices/slice_order';
-import { ingSlice } from './slices/slices_ingredients';
+import { user_slice } from './slices/slice_user/slice_user';
+import { feed_slice } from './slices/slice_feed/slice_feed';
+import { orders_slice } from './slices/slice_order/slice_order';
+import { ingSlice } from './slices/slice_ingredients/slices_ingredients';
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
-import { burger_constructor_slice } from './slices/slice_burger_constructor';
+import { burger_constructor_slice } from './slices/slice_burger_constructor/slice_burger_constructor';
 
-const root_reducer = combineSlices(
+export const root_reducer = combineSlices(
   ingSlice,
   user_slice,
   burger_constructor_slice,

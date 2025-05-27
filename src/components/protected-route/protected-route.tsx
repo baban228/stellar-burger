@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Preloader } from '@ui';
-import { user_selectors } from '../../services/slices/slice_user';
+import { user_selectors } from '../../services/slices/slice_user/slice_user';
 import { useSelector } from '../../services/store';
 
 type ProtectedRouteProps = {

@@ -6,8 +6,8 @@ import { use_dispatch, useSelector } from '../../services/store';
 import {
   fetch_order_by_number,
   order_selectors
-} from '../../services/slices/slice_order';
-import { ingSelectors } from '../../services/slices/slices_ingredients';
+} from '../../services/slices/slice_order/slice_order';
+import { ingSelectors } from '../../services/slices/slice_ingredients/slices_ingredients';
 import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {

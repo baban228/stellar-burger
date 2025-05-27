@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import {
   burger_constructor_actions,
   burger_constructor_selectors
-} from '../../services/slices/slice_burger_constructor';
+} from '../../services/slices/slice_burger_constructor/slice_burger_constructor';
 import {
   fetch_order_burger,
   order_actions,
   order_selectors
-} from '../../services/slices/slice_order';
-import { fetch_user, user_selectors } from '../../services/slices/slice_user';
+} from '../../services/slices/slice_order/slice_order';
+import { fetch_user, user_selectors } from '../../services/slices/slice_user/slice_user';
 
 export const BurgerConstructor: FC = () => {
   const _navigate = useNavigate();

@@ -1,8 +1,10 @@
-import { getIngredientsApi } from '@api';
+// src/services/slices/slice_ings/slice_ings.ts
+
+import { getIngredientsApi } from '../../../utils/burger-api';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
 
-type TIngState = {
+export type TIngState = {
   ings: TIngredient[];
   isLoading: boolean;
   err: string | null;

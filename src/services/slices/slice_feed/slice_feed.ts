@@ -1,4 +1,6 @@
-import { getFeedsApi } from '@api';
+// src/services/slices/slice_feed/slice_feed.ts
+
+import { getFeedsApi } from '../../../utils/burger-api';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { TOrdersData } from '@utils-types';
 
@@ -7,7 +9,9 @@ type TFeed_State = TOrdersData & {
   error_message: string | null;
 };
 
-const initialState: TFeed_State = {
+export type { TFeed_State }; // Добавляем экспорт типа TFeed_State
+
+export const initialState: TFeed_State = {
   orders: [],
   total: 0,
   totalToday: 0,
@@ -21,9 +25,12 @@ export const fetch_feed = createAsyncThunk<
   { rejectValue: string }
 >('feeds/fetchFeed', async (_, { rejectWithValue }) => {
   try {
+    console.log('Fetching feeds...');
     const response = await getFeedsApi();
+    console.log('Fetched feeds:', response);
     return response;
   } catch (error) {
+    console.error('Error fetching feeds:', error);
     return rejectWithValue('Ошибка при получении данных ленты заказов');
   }
 });

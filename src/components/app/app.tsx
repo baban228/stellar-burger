@@ -13,9 +13,9 @@ import '../../index.css';
 import { useEffect } from 'react';
 import styles from './app.module.css';
 import { use_dispatch } from '../../services/store';
-import { fetch_user } from '../../services/slices/slice_user';
+import { fetch_user } from '../../services/slices/slice_user/slice_user';
 import { ProtectedRoute } from '../protected-route/protected-route';
-import { fetchIngs } from '../../services/slices/slices_ingredients';
+import { fetchIngs } from '../../services/slices/slice_ingredients/slices_ingredients';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 

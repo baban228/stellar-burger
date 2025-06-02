@@ -1,119 +1,135 @@
-import { configureStore } from '@reduxjs/toolkit';
-import ordersSlice, {
+import reducer, {
   fetch_order_burger,
   fetch_order_by_number,
   fetch_orders,
   order_actions,
-  order_selectors,
-  orders_slice
 } from './slice_order';
-import {
-  getOrderByNumberApi,
-  getOrdersApi,
-  orderBurgerApi
-} from '../../../utils/burger-api';
-import { Root_State } from '../../store';
 
-jest.mock('../../../utils/burger-api', () => ({
-  orderBurgerApi: jest.fn(),
-  getOrderByNumberApi: jest.fn(),
-  getOrdersApi: jest.fn()
-}));
+const mockOrder = {
+  _id: 'order1',
+  ingredients: ['ingredient1', 'ingredient2'],
+  status: 'done',
+  name: 'Test Order',
+  number: 123,
+  createdAt: '2025-06-01T00:00:00.000Z',
+  updatedAt: '2025-06-01T00:00:00.000Z',
+};
+const mockOrdersList = [
+  mockOrder,
+  { ...mockOrder, _id: 'order2', number: 124 },
+];
 
-describe('Orders Slice', () => {
-  const store = configureStore({
-    reducer: {
-      orders: orders_slice.reducer
-    }
-  });
-
-  const mockOrder = {
-    _id: '123',
-    number: 1,
-    ingredients: ['ingredient1', 'ingredient2'],
-    status: 'done',
-    name: 'Test Order',
-    createdAt: '2023-10-01T12:00:00Z',
-    updatedAt: '2023-10-01T12:00:00Z'
+describe('orders slice reducer', () => {
+  const initialState = {
+    orders: [],
+    order: null,
+    is_loading: false,
+    error_message: null,
   };
 
-  const mockOrders = [
-    {
-      _id: '123',
-      number: 1,
-      ingredients: ['ingredient1'],
-      status: 'done',
-      name: 'Test Order 1',
-      createdAt: '2023-10-01T12:00:00Z',
-      updatedAt: '2023-10-01T12:00:00Z'
-    },
-    {
-      _id: '456',
-      number: 2,
-      ingredients: ['ingredient2'],
-      status: 'pending',
-      name: 'Test Order 2',
-      createdAt: '2023-10-02T12:00:00Z',
-      updatedAt: '2023-10-02T12:00:00Z'
-    }
-  ];
+  it('should return the initial state when passed an empty action', () => {
+    expect(reducer(undefined, { type: '' })).toEqual(initialState);
+  });
 
-  it('should initialize with correct initial state', () => {
-    const state = store.getState().orders;
-    expect(state).toEqual({
-      orders: [],
-      order: null,
-      is_loading: false,
-      error_message: null
+  describe('synchronous actions', () => {
+    it('should handle order_modal_data_action', () => {
+      const action = order_actions.order_modal_data_action(mockOrder);
+      const state = reducer(initialState, action);
+      expect(state.order).toEqual(mockOrder);
+    });
+
+    it('should handle clear_order_modal_data_action', () => {
+      const stateWithOrder = { ...initialState, order: mockOrder };
+      const action = order_actions.clear_order_modal_data_action();
+      const state = reducer(stateWithOrder, action);
+      expect(state.order).toBeNull();
     });
   });
 
-  it('should handle successful order creation', async () => {
-    (orderBurgerApi as jest.Mock).mockResolvedValue({ order: mockOrder });
+  describe('fetch_order_burger', () => {
+    it('should set is_loading to true and clear error on pending', () => {
+      const action = { type: fetch_order_burger.pending.type };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(true);
+      expect(state.error_message).toBeNull();
+    });
 
-    await store.dispatch(fetch_order_burger(['ingredient1', 'ingredient2']));
+    it('should handle fulfilled', () => {
+      const action = {
+        type: fetch_order_burger.fulfilled.type,
+        payload: mockOrder,
+      };
+      const state = reducer(initialState, action);
+      expect(state.order).toEqual(mockOrder);
+      expect(state.is_loading).toBe(false);
+    });
 
-    const state = store.getState().orders;
-    expect(state.order).toEqual(mockOrder);
-    expect(state.is_loading).toBe(false);
-    expect(state.error_message).toBeNull();
+    it('should handle rejected', () => {
+      const action = {
+        type: fetch_order_burger.rejected.type,
+        payload: 'Order creation error',
+      };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBe('Order creation error');
+    });
   });
 
-  it('should handle fetching order by number', async () => {
-    (getOrderByNumberApi as jest.Mock).mockResolvedValue({ orders: [mockOrder] });
+  describe('fetch_order_by_number', () => {
+    it('should set is_loading to true and clear error on pending', () => {
+      const action = { type: fetch_order_by_number.pending.type };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(true);
+      expect(state.error_message).toBeNull();
+    });
 
-    await store.dispatch(fetch_order_by_number(1));
+    it('should handle fulfilled', () => {
+      const action = {
+        type: fetch_order_by_number.fulfilled.type,
+        payload: mockOrder,
+      };
+      const state = reducer(initialState, action);
+      expect(state.order).toEqual(mockOrder);
+      expect(state.is_loading).toBe(false);
+    });
 
-    const state = store.getState().orders;
-    expect(state.order).toEqual(mockOrder);
-    expect(state.is_loading).toBe(false);
-    expect(state.error_message).toBeNull();
+    it('should handle rejected', () => {
+      const action = {
+        type: fetch_order_by_number.rejected.type,
+        payload: 'Fetch order by number error',
+      };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBe('Fetch order by number error');
+    });
   });
 
-  it('should handle fetching all orders', async () => {
-    (getOrdersApi as jest.Mock).mockResolvedValue(mockOrders);
+  describe('fetch_orders', () => {
+    it('should set is_loading to true and clear error on pending', () => {
+      const action = { type: fetch_orders.pending.type };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(true);
+      expect(state.error_message).toBeNull();
+    });
 
-    await store.dispatch(fetch_orders());
+    it('should handle fulfilled', () => {
+      const action = {
+        type: fetch_orders.fulfilled.type,
+        payload: mockOrdersList,
+      };
+      const state = reducer(initialState, action);
+      expect(state.orders).toEqual(mockOrdersList);
+      expect(state.is_loading).toBe(false);
+    });
 
-    const state = store.getState().orders;
-    expect(state.orders).toEqual(mockOrders);
-    expect(state.is_loading).toBe(false);
-    expect(state.error_message).toBeNull();
-  });
-
-  it('should correctly select orders data', () => {
-    const mockState: Partial<Root_State> = {
-      orders: {
-        orders: mockOrders,
-        order: mockOrder,
-        is_loading: false,
-        error_message: null
-      }
-    };
-
-    expect(order_selectors.orders_selector(mockState as Root_State)).toEqual(mockOrders);
-    expect(order_selectors.order_selector(mockState as Root_State)).toEqual(mockOrder);
-    expect(order_selectors.is_loading_selector(mockState as Root_State)).toBe(false);
-    expect(order_selectors.error_message_selector(mockState as Root_State)).toBeNull();
+    it('should handle rejected', () => {
+      const action = {
+        type: fetch_orders.rejected.type,
+        payload: 'Fetch all orders error',
+      };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBe('Fetch all orders error');
+    });
   });
 });

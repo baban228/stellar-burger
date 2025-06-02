@@ -1,68 +1,152 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import {
+import reducer, {
   fetch_register_user,
-  user_selectors,
-  user_slice
+  fetch_login_user,
+  fetch_user,
+  fetch_logout,
+  logout_user,
 } from './slice_user';
-import {
-  registerUserApi
-} from '../../../utils/burger-api';
 
-const rootReducer = combineReducers({
-  user: user_slice.reducer
-});
+// Mock user object for tests
+const mockUser = {
+  name: 'Test User',
+  email: 'test@example.com',
+};
 
-export type RootState = ReturnType<typeof rootReducer>;
+describe('user slice reducer', () => {
+  const initialState = {
+    user_data: null,
+    is_auth_checked: false,
+    is_loading: true,
+    error_message: null,
+  };
 
-jest.mock('../../../utils/burger-api', () => ({
-  registerUserApi: jest.fn(),
-  loginUserApi: jest.fn(),
-  getUserApi: jest.fn(),
-  logoutApi: jest.fn(),
-  updateUserApi: jest.fn()
-}));
-
-describe('User Slice', () => {
-  const store = configureStore({
-    reducer: rootReducer
+  it('should return the initial state when passed an empty action', () => {
+    expect(reducer(undefined, { type: '' })).toEqual(initialState);
   });
 
-  it('should initialize with correct initial state', () => {
-    const state = store.getState().user;
-    expect(state).toEqual({
+  it('should handle logout_user action', () => {
+    const modifiedState = {
+      user_data: mockUser,
+      is_auth_checked: true,
+      is_loading: false,
+      error_message: 'Some error',
+    };
+    const nextState = reducer(modifiedState, logout_user());
+    expect(nextState).toEqual({
       user_data: null,
       is_auth_checked: false,
-      is_loading: true,
-      error_message: null
+      is_loading: false,
+      error_message: null,
     });
   });
 
-  it('should handle successful user registration', async () => {
-    const mockResponse = { user: { name: 'John Doe', email: 'john@example.com' } };
-    (registerUserApi as jest.Mock).mockResolvedValue(mockResponse);
+  describe('fetch_register_user', () => {
+    it('should set is_loading to true on pending', () => {
+      const action = { type: fetch_register_user.pending.type };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(true);
+    });
 
-    await store.dispatch(fetch_register_user({ name: 'John', email: 'john@example.com', password: 'password' }));
+    it('should handle fulfilled', () => {
+      const action = {
+        type: fetch_register_user.fulfilled.type,
+        payload: { user: mockUser },
+      };
+      const state = reducer(initialState, action);
+      expect(state.user_data).toEqual(mockUser);
+      expect(state.is_auth_checked).toBe(true);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBeNull();
+    });
 
-    const state = store.getState().user;
-    expect(state.user_data).toEqual(mockResponse.user);
-    expect(state.is_auth_checked).toBe(true);
-    expect(state.is_loading).toBe(false);
-    expect(state.error_message).toBeNull();
+    it('should handle rejected', () => {
+      const action = {
+        type: fetch_register_user.rejected.type,
+        payload: 'Registration error',
+      };
+      const state = reducer(initialState, action);
+      expect(state.is_auth_checked).toBe(false);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBe('Registration error');
+    });
   });
 
-  it('should correctly select user data', () => {
-    const mockState: RootState = {
-      user: {
-        user_data: { name: 'John Doe', email: 'john@example.com' },
+  describe('fetch_login_user', () => {
+    it('should set is_loading to true on pending', () => {
+      const action = { type: fetch_login_user.pending.type };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(true);
+    });
+
+    it('should handle fulfilled', () => {
+      const action = {
+        type: fetch_login_user.fulfilled.type,
+        payload: { user: mockUser, accessToken: 'token', refreshToken: 'ref' },
+      };
+      const state = reducer(initialState, action);
+      expect(state.user_data).toEqual(mockUser);
+      expect(state.is_auth_checked).toBe(true);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBeNull();
+    });
+
+    it('should handle rejected', () => {
+      const action = {
+        type: fetch_login_user.rejected.type,
+        payload: 'Login error',
+      };
+      const state = reducer(initialState, action);
+      expect(state.is_auth_checked).toBe(true);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBe('Login error');
+    });
+  });
+
+  describe('fetch_user', () => {
+    it('should set is_loading to true on pending', () => {
+      const action = { type: fetch_user.pending.type };
+      const state = reducer(initialState, action);
+      expect(state.is_loading).toBe(true);
+    });
+
+    it('should handle fulfilled', () => {
+      const action = {
+        type: fetch_user.fulfilled.type,
+        payload: { user: mockUser },
+      };
+      const state = reducer(initialState, action);
+      expect(state.user_data).toEqual(mockUser);
+      expect(state.is_auth_checked).toBe(true);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBeNull();
+    });
+
+    it('should handle rejected', () => {
+      const action = {
+        type: fetch_user.rejected.type,
+        payload: 'Fetch user error',
+      };
+      const state = reducer(initialState, action);
+      expect(state.is_auth_checked).toBe(true);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBe('Fetch user error');
+    });
+  });
+
+  describe('fetch_logout', () => {
+    it('should handle fulfilled by clearing user data', () => {
+      const filledState = {
+        user_data: mockUser,
         is_auth_checked: true,
         is_loading: false,
-        error_message: null
-      }
-    };
-
-    expect(user_selectors.user_selector(mockState)).toEqual(mockState.user.user_data);
-    expect(user_selectors.is_auth_checked_selector(mockState)).toBe(true);
-    expect(user_selectors.is_loading_selector(mockState)).toBe(false);
-    expect(user_selectors.error_message_selector(mockState)).toBeNull();
+        error_message: null,
+      };
+      const action = { type: fetch_logout.fulfilled.type };
+      const state = reducer(filledState, action);
+      expect(state.user_data).toBeNull();
+      expect(state.is_auth_checked).toBe(false);
+      expect(state.is_loading).toBe(false);
+      expect(state.error_message).toBeNull();
+    });
   });
 });

@@ -19,7 +19,6 @@ import { fetchIngs } from '../../services/slices/slice_ingredients/slices_ingred
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 
-
 const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -60,7 +59,6 @@ const App = () => {
         />
         <Route path='*' element={<NotFound404 />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
-
       </Routes>
 
       {background && (
@@ -95,7 +93,6 @@ const App = () => {
       )}
     </div>
   );
-
 };
 
 export default App;

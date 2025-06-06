@@ -1,5 +1,3 @@
-// src/services/slices/slice_ings/slice_ings.ts
-
 import { getIngredientsApi } from '../../../utils/burger-api';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
@@ -34,18 +32,14 @@ export const ingSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (b) => {
-    b
-      .addCase(fetchIngs.pending, (s) => {
-        s.isLoading = true;
-        s.err = null;
+    b.addCase(fetchIngs.pending, (s) => {
+      s.isLoading = true;
+      s.err = null;
+    })
+      .addCase(fetchIngs.fulfilled, (s, a: PayloadAction<TIngredient[]>) => {
+        s.ings = a.payload;
+        s.isLoading = false;
       })
-      .addCase(
-        fetchIngs.fulfilled,
-        (s, a: PayloadAction<TIngredient[]>) => {
-          s.ings = a.payload;
-          s.isLoading = false;
-        }
-      )
       .addCase(fetchIngs.rejected, (s, a) => {
         s.isLoading = false;
         s.err = a.payload || 'Неизвестная ошибка';
@@ -54,14 +48,9 @@ export const ingSlice = createSlice({
 });
 
 export const ingSelectors = {
-  ingSel: (st: { ings: TIngState }) =>
-    st.ings.ings,
-
-  isLoadingSel: (st: { ings: TIngState }) =>
-    st.ings.isLoading,
-
-  errSel: (st: { ings: TIngState }) =>
-    st.ings.err
+  ingSel: (st: { ings: TIngState }) => st.ings.ings,
+  isLoadingSel: (st: { ings: TIngState }) => st.ings.isLoading,
+  errSel: (st: { ings: TIngState }) => st.ings.err
 };
 
 export default ingSlice.reducer;

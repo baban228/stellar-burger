@@ -8,9 +8,7 @@ import { FC } from 'react';
 import { ingSelectors } from '../../services/slices/slice_ingredients/slices_ingredients';
 
 export const ConstructorPage: FC = () => {
-  const _isIngredientsLoading = useSelector(
-    ingSelectors.isLoadingSel
-  );
+  const _isIngredientsLoading = useSelector(ingSelectors.isLoadingSel);
 
   return (
     <>

@@ -35,3 +35,31 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.add('loginByApi', () => {
+  // First try to create a test user
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('API_URL')}/auth/register`,
+    failOnStatusCode: false,
+    body: {
+      email: Cypress.env('TEST_USER_EMAIL'),
+      password: Cypress.env('TEST_USER_PASSWORD'),
+      name: 'Test User'
+    }
+  }).then(() => {
+    // Then login with these credentials
+    cy.request({
+      method: 'POST',
+      url: `${Cypress.env('API_URL')}/auth/login`,
+      body: {
+        email: Cypress.env('TEST_USER_EMAIL'),
+        password: Cypress.env('TEST_USER_PASSWORD')
+      }
+    }).then((response) => {
+      const { accessToken, refreshToken } = response.body;
+      cy.setCookie('accessToken', accessToken);
+      window.localStorage.setItem('refreshToken', refreshToken);
+    });
+  });
+});

@@ -1,9 +1,7 @@
 {
   "success": true,
-  "accessToken": "lorem",
-  "refreshToken": "ipsum",
   "user": {
-    "email": "artem@gtgth.ru",
+    "email": "artem5556@mail.com",
     "name": "artem"
   }
 }

@@ -12,9 +12,7 @@ const _maxIngredients = 6;
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const _location = useLocation();
 
-  const _ingredients: TIngredient[] = useSelector(
-    ingSelectors.ingSel
-  );
+  const _ingredients: TIngredient[] = useSelector(ingSelectors.ingSel);
 
   const _orderInfo = useMemo(() => {
     if (!_ingredients.length) return null;
@@ -28,10 +26,7 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
       []
     );
 
-    const _total = _ingredientsInfo.reduce(
-      (acc, item) => acc + item.price,
-      0
-    );
+    const _total = _ingredientsInfo.reduce((acc, item) => acc + item.price, 0);
 
     const _ingredientsToShow = _ingredientsInfo.slice(0, _maxIngredients);
 

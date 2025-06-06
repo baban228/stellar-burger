@@ -19,7 +19,7 @@ export const Login: FC = () => {
     const resultAction = await dispatch(fetch_login_user({ email, password }));
 
     if (fetch_login_user.fulfilled.match(resultAction)) {
-      navigate('/'); 
+      navigate('/');
     } else {
       setError('Ошибка при авторизации.');
     }

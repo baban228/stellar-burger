@@ -66,7 +66,8 @@ export const feed_selectors = {
   total_selector: (state: { feed: TFeed_State }) => state.feed.total,
   total_today_selector: (state: { feed: TFeed_State }) => state.feed.totalToday,
   is_loading_selector: (state: { feed: TFeed_State }) => state.feed.is_loading,
-  error_message_selector: (state: { feed: TFeed_State }) => state.feed.error_message
+  error_message_selector: (state: { feed: TFeed_State }) =>
+    state.feed.error_message
 };
 
 export default feed_slice.reducer;

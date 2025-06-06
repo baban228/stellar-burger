@@ -13,7 +13,8 @@ import {
   order_actions,
   order_selectors
 } from '../../services/slices/slice_order/slice_order';
-import { fetch_user, user_selectors } from '../../services/slices/slice_user/slice_user';
+import { fetch_user } from '../../services/slices/slice_user/slice_user';
+import { user_selectors } from '../../services/slices/slice_user/slice_user';
 
 export const BurgerConstructor: FC = () => {
   const _navigate = useNavigate();

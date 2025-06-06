@@ -10,13 +10,19 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
 
     const _handleMoveDown = () => {
       _dispatch(
-        burger_constructor_actions.drag_ingredient({ from: index, to: index + 1 })
+        burger_constructor_actions.drag_ingredient({
+          from: index,
+          to: index + 1
+        })
       );
     };
 
     const _handleMoveUp = () => {
       _dispatch(
-        burger_constructor_actions.drag_ingredient({ from: index, to: index - 1 })
+        burger_constructor_actions.drag_ingredient({
+          from: index,
+          to: index - 1
+        })
       );
     };
 
